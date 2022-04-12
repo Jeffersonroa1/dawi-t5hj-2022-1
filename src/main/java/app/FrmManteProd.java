@@ -77,9 +77,14 @@ public class FrmManteProd extends JFrame {
 		
 		
 		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buscarProducto();
+			}
+		});
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				buscar();
+				buscarProducto();
 			}
 		});
 		btnBuscar.setBounds(324, 43, 89, 23);
@@ -240,40 +245,27 @@ public class FrmManteProd extends JFrame {
 			em.close();
 	}
 	
-	void buscar() {
+	void buscarProducto() {
 		
-		//obtener el id del txtbox
-		String idprod= txtCódigo.getText();
-		String desprod= txtDescripcion.getText();
-		
-		EntityManagerFactory fabrica = new Persistence().createEntityManagerFactory("mysql");
-		EntityManager em=fabrica.createEntityManager();
-		em.getTransaction().begin();
+		EntityManagerFactory fabrica=new Persistence().createEntityManagerFactory("mysql");
+		EntityManager em = fabrica.createEntityManager();
+		//si son consultas no va el begin
+		//em.getTransaction().begin();
 		
 		
+		//acciones
+		Producto p = em.find(Producto.class, txtCódigo.getText());
+		 									  //si existe el id devuelve dato
+		 									  // si no devuelve null
+		 if(p !=null) {
+			 txtDescripcion.setText(p.getDescripcion());
+		 }else {
+			 System.out.println("No existeel código");
+		 }
+
 		
-		TypedQuery<Usuario> consulta= em.createQuery("Select u from Producto u where u.idproducto = :xidproducto", Usuario.class);
-		consulta.setParameter("idproducto", idprod);
-		//txtDescripcion.setText(consulta.getSingleResult());
-		//List<Usuario> lstUsuario=consulta.getResultList();
-		
+		//em.getTransaction().commit();
 		em.close();
-		
-		
-		
-		
-		
-		/*
-		Usuario u=em.find(Usuario.class, idprod);
-		if(u !=null) {
-			System.out.print("El objeto : "+u);
-		}else {
-			System.out.println("No se puede borrar porque no existe");
-		}
-		
-		em.getTransaction().commit();
-		//cerrar
-		em.close();*/
 	}
 }
 
